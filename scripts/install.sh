@@ -2,7 +2,7 @@
 # BXD EventOps Agent — Linux/macOS installer bootstrap
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/BxD-io/eventops-agent/main/scripts/install.sh \
+#   curl -fsSL https://raw.githubusercontent.com/bxd-eventops-agents/agent/main/scripts/install.sh \
 #     | bash -s -- --url https://api.eventops.bxd.com.br --key evpr_...
 #
 # Or download first:
@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-GITHUB_REPO="BxD-io/eventops-agent"
+GITHUB_REPO="bxd-eventops-agents/agent"
 TELEGRAF_VERSION="1.33.0"
 
 # ── Parse arguments ───────────────────────────────────────────────────────────

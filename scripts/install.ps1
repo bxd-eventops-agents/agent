@@ -20,7 +20,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$GITHUB_REPO     = "BxD-io/eventops-agent"
+$GITHUB_REPO     = "bxd-eventops-agents/agent"
 $TELEGRAF_VERSION = "1.33.0"
 $BASE_DIR        = "C:\ProgramData\EventOps"
 $TELEGRAF_DIR    = "$BASE_DIR\telegraf"
