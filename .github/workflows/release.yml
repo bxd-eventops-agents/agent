@@ -104,9 +104,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
+          merge-multiple: true
 
-      - name: Flatten dist
-        run: find dist -type f -exec mv {} dist/ \; 2>/dev/null; true
+      - name: List dist (debug)
+        run: find dist -type f | sort
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
