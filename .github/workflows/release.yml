@@ -1,0 +1,141 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - os: windows
+            arch: amd64
+            runner: windows-latest
+            rid: win-x64
+            output: eventops-agent-windows-amd64.exe
+
+          - os: windows
+            arch: arm64
+            runner: windows-latest
+            rid: win-arm64
+            output: eventops-agent-windows-arm64.exe
+
+          - os: linux
+            arch: amd64
+            runner: ubuntu-latest
+            rid: linux-x64
+            output: eventops-agent-linux-amd64
+
+          - os: linux
+            arch: arm64
+            runner: ubuntu-latest
+            rid: linux-arm64
+            output: eventops-agent-linux-arm64
+
+          - os: darwin
+            arch: amd64
+            runner: macos-latest
+            rid: osx-x64
+            output: eventops-agent-darwin-amd64
+
+          - os: darwin
+            arch: arm64
+            runner: macos-latest
+            rid: osx-arm64
+            output: eventops-agent-darwin-arm64
+
+    steps:
+      - name: Checkout agent source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.AGENT_SOURCE_REPO }}
+          token: ${{ secrets.AGENT_SOURCE_TOKEN }}
+          path: source
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Publish
+        run: |
+          dotnet publish source/agent/Bxd.EventOps.Agent/Bxd.EventOps.Agent.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:StripSymbols=true \
+            -o publish
+
+      - name: Rename binary (Unix)
+        if: matrix.os != 'windows'
+        run: mv publish/eventops-agent publish/${{ matrix.output }}
+
+      - name: Rename binary (Windows)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        run: Rename-Item publish/eventops-agent.exe ${{ matrix.output }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output }}
+          path: publish/${{ matrix.output }}
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (for scripts)
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Flatten dist
+        run: find dist -type f -exec mv {} dist/ \; 2>/dev/null; true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "BXD EventOps Agent ${{ github.ref_name }}"
+          body: |
+            ## BXD EventOps Agent ${{ github.ref_name }}
+
+            ### Instalação
+
+            Gere uma chave de registro no portal BXD EventOps e execute:
+
+            **Windows:**
+            ```powershell
+            iwr -Uri "https://raw.githubusercontent.com/bxd-eventops-agents/agent/main/scripts/install.ps1" -OutFile install.ps1
+            .\install.ps1 --url <api-url> --key evpr_<chave>
+            ```
+
+            **Linux / macOS:**
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/bxd-eventops-agents/agent/main/scripts/install.sh | sudo bash -s -- --url <api-url> --key evpr_<chave>
+            ```
+
+            ### Binários
+          files: |
+            dist/eventops-agent-windows-amd64.exe
+            dist/eventops-agent-windows-arm64.exe
+            dist/eventops-agent-linux-amd64
+            dist/eventops-agent-linux-arm64
+            dist/eventops-agent-darwin-amd64
+            dist/eventops-agent-darwin-arm64
+            scripts/install.ps1
+            scripts/install.sh
+          draft: false
+          prerelease: false
