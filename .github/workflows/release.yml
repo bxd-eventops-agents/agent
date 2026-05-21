@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: Build ${{ matrix.os }}-${{ matrix.arch }}
@@ -80,8 +84,7 @@ jobs:
 
       - name: Rename binary (Windows)
         if: matrix.os == 'windows'
-        shell: pwsh
-        run: Rename-Item publish/eventops-agent.exe ${{ matrix.output }}
+        run: mv publish/eventops-agent.exe publish/${{ matrix.output }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -116,7 +119,7 @@ jobs:
 
             Gere uma chave de registro no portal BXD EventOps e execute:
 
-            **Windows:**
+            **Windows (PowerShell como Administrador):**
             ```powershell
             iwr -Uri "https://raw.githubusercontent.com/bxd-eventops-agents/agent/main/scripts/install.ps1" -OutFile install.ps1
             .\install.ps1 --url <api-url> --key evpr_<chave>
