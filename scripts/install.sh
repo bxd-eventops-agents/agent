@@ -103,7 +103,7 @@ echo "  [....] Downloading Telegraf $TELEGRAF_VERSION..."
 TMP_DIR="$(mktemp -d)"
 
 if [[ "$OS" == "linux" ]]; then
-    TELEGRAF_URL="https://github.com/influxdata/telegraf/releases/download/v$TELEGRAF_VERSION/telegraf-$TELEGRAF_VERSION_linux_${ARCH}.tar.gz"
+    TELEGRAF_URL="https://github.com/influxdata/telegraf/releases/download/v${TELEGRAF_VERSION}/telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz"
     TELEGRAF_ARCHIVE="$TMP_DIR/telegraf.tar.gz"
     download "$TELEGRAF_URL" "$TELEGRAF_ARCHIVE"
     tar -xzf "$TELEGRAF_ARCHIVE" -C "$TMP_DIR"
@@ -111,7 +111,7 @@ if [[ "$OS" == "linux" ]]; then
     chmod +x "$TELEGRAF_DIR/telegraf"
 else
     # macOS: use the darwin binary
-    TELEGRAF_URL="https://github.com/influxdata/telegraf/releases/download/v$TELEGRAF_VERSION/telegraf-$TELEGRAF_VERSION_darwin_${ARCH}.tar.gz"
+    TELEGRAF_URL="https://github.com/influxdata/telegraf/releases/download/v${TELEGRAF_VERSION}/telegraf-${TELEGRAF_VERSION}_darwin_${ARCH}.tar.gz"
     TELEGRAF_ARCHIVE="$TMP_DIR/telegraf.tar.gz"
     download "$TELEGRAF_URL" "$TELEGRAF_ARCHIVE"
     tar -xzf "$TELEGRAF_ARCHIVE" -C "$TMP_DIR"

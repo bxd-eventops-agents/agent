@@ -5,8 +5,8 @@
 .DESCRIPTION
     Downloads the EventOps Agent and Telegraf, then runs the self-registration install.
 .EXAMPLE
-    iwr -Uri "https://raw.githubusercontent.com/BxD-io/eventops-agent/main/scripts/install.ps1" -OutFile install.ps1
-    .\install.ps1 --url https://api.eventops.bxd.com.br --key evpr_...
+    iwr -Uri "https://raw.githubusercontent.com/bxd-eventops-agents/agent/main/scripts/install.ps1" -OutFile install.ps1
+    .\install.ps1 --url https://api.bxd.dev.br --key evpr_...
 #>
 
 param(
@@ -64,7 +64,7 @@ try {
 
 Write-Step "Downloading Telegraf $TELEGRAF_VERSION..."
 $telegrafArch = if ($arch -eq "arm64") { "arm64" } else { "amd64" }
-$telegrafUrl  = "https://github.com/influxdata/telegraf/releases/download/v$TELEGRAF_VERSION/telegraf-$TELEGRAF_VERSION_windows_$telegrafArch.zip"
+$telegrafUrl  = "https://github.com/influxdata/telegraf/releases/download/v$TELEGRAF_VERSION/telegraf-${TELEGRAF_VERSION}_windows_${telegrafArch}.zip"
 $telegrafZip  = "$env:TEMP\telegraf.zip"
 try {
     Invoke-WebRequest -Uri $telegrafUrl -OutFile $telegrafZip -UseBasicParsing

@@ -75,5 +75,5 @@ Os binários estão disponíveis na [página de releases](https://github.com/bxd
 
 ## Suporte
 
-- Portal: [eventops.bxd.com.br](https://eventops.bxd.com.br)
-- E-mail: suporte@bxd.com.br
+- Portal: [bxd.dev.br](https://bxd.dev.br)
+- E-mail: suporte@bxd.dev.br
